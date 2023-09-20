@@ -1,0 +1,7 @@
+*.egg-info
+__pycache__
+*.py[cod]
+# add python related files
+*.pyc
+*.pyo
+*.pyd
