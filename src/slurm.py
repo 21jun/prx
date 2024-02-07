@@ -67,11 +67,13 @@ def run_sme(config):
     # print(rp)
 
 
-def run_scontrol(config):
+def run_scontrol(config, job_id):
     SERVER = config["REMOTE"]["SERVER"]
+    HOME = config["REMOTE"]["HOME"]
+
     print_color(bcolors.OKGREEN, "[scontrol]")
-    print(f"your current jobs are...")
-    command = f"ssh {SERVER} '. {HOME}/.bashrc; scontrol show job {111} | grep StdOut | xargs | cut -d'=' -f2 | xargs cat;' "  # noqa
+    print(f"Slurm logs... {job_id}")
+    command = f"ssh {SERVER} '. {HOME}/.bashrc; scontrol show job {job_id} | grep StdOut | xargs | cut -d'=' -f2 | xargs cat;' "  # noqa
     result = subprocess.Popen(
         command,
         shell=True,

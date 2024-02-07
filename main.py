@@ -86,6 +86,9 @@ def exec_sremain(config, debug=False):
     # then, submit the job
     slurm.run_sremain(config=config)
 
+def exec_scontrol(config, job_id):
+    slurm.run_scontrol(config=config, job_id=job_id)
+
 
 def exec_rsync(config, dry_run=False):
     rsync.rsync_box(config=config, dry_run=dry_run)
@@ -99,13 +102,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "command",
-        choices=["init", "sme", "run", "sremain", "sync"],
+        choices=["init", "sme", "run", "sremain", "sync", "log"],
         help="Subcommand to execute",
     )
     # parser.add_argument('args', nargs=argparse.REMAINDER, help="Additional arguments")
     parser.add_argument("--dry", action="store_true")
     parser.add_argument("--nosync", action="store_true")
     parser.add_argument("--file", "-f", type=str, help="sbatch file")
+    parser.add_argument("--job_id", "-j", type=str, default=None)
     args = parser.parse_args()
 
     command = args.command
@@ -119,6 +123,8 @@ def main():
         exec_sremain(config)
     elif command == "sync":
         exec_rsync(config, dry_run=args.dry)
+    elif command == "log":
+        exec_scontrol(config, job_id =args.job_id)
     else:
         print("Unknown command:", command)
         exit(1)
