@@ -91,14 +91,17 @@ def exec_rsync(config, dry_run=False):
     rsync.rsync_box(config=config, dry_run=dry_run)
 
 
-
 def main():
     # parse config at .prx directory (.ini)
     config = parse_config()
 
     # config for runtime
     parser = argparse.ArgumentParser()
-    parser.add_argument('command', choices=['init', 'sme', "run", "sremain","sync"], help="Subcommand to execute")
+    parser.add_argument(
+        "command",
+        choices=["init", "sme", "run", "sremain", "sync"],
+        help="Subcommand to execute",
+    )
     # parser.add_argument('args', nargs=argparse.REMAINDER, help="Additional arguments")
     parser.add_argument("--dry", action="store_true")
     parser.add_argument("--nosync", action="store_true")
@@ -106,15 +109,15 @@ def main():
     args = parser.parse_args()
 
     command = args.command
-    if command == 'init':
+    if command == "init":
         init(config)
-    elif command == 'sme':
+    elif command == "sme":
         slurm.run_sme(config)
-    elif command == 'run':
+    elif command == "run":
         exec_sbatch(config, sbatch_file_path=args.file, dry_run=args.dry)
-    elif command == 'sremain':
+    elif command == "sremain":
         exec_sremain(config)
-    elif command == 'sync':
+    elif command == "sync":
         exec_rsync(config, dry_run=args.dry)
     else:
         print("Unknown command:", command)
