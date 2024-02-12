@@ -4,7 +4,7 @@ import os
 package_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def rsync_box(config, dry_run=False):
+def rsync_box(config, dry_run=False, reverse_sync=False):
 
     SERVER = config["REMOTE"]["SERVER"]
     WORKDIR = config["REMOTE"]["WORKDIR"]
@@ -24,6 +24,7 @@ def rsync_box(config, dry_run=False):
             SOURCE,
             DEST,
             "--dry-run" if dry_run else "",
+            "--reverse" if reverse_sync else "",
         ]
     ).communicate()
     # sub_proc.wait()

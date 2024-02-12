@@ -75,9 +75,9 @@ def init(config):
     run_mkdir(config)
 
 
-def exec_sbatch(config, sbatch_file_path, dry_run=False):
+def exec_sbatch(config, sbatch_file_path, dry_run=False, reverse_sync=False):
     # first, sync the files
-    rsync.rsync_box(config=config, dry_run=dry_run)
+    rsync.rsync_box(config=config, dry_run=dry_run, reverse_sync=reverse_sync)
     # then, submit the job
     slurm.run_sbatch(config=config, sbatch_file_path=sbatch_file_path)
 
@@ -90,8 +90,8 @@ def exec_scontrol(config, job_id):
     slurm.run_scontrol(config=config, job_id=job_id)
 
 
-def exec_rsync(config, dry_run=False):
-    rsync.rsync_box(config=config, dry_run=dry_run)
+def exec_rsync(config, dry_run=False, reverse_sync=False):
+    rsync.rsync_box(config=config, dry_run=dry_run, reverse_sync=reverse_sync)
 
 
 def main():
@@ -107,6 +107,7 @@ def main():
     )
     # parser.add_argument('args', nargs=argparse.REMAINDER, help="Additional arguments")
     parser.add_argument("--dry", action="store_true")
+    parser.add_argument("--reverse", "-r", action="store_true")
     parser.add_argument("--nosync", action="store_true")
     parser.add_argument("--file", "-f", type=str, help="sbatch file")
     parser.add_argument("--job_id", "-j", type=str, default=None)
@@ -122,7 +123,7 @@ def main():
     elif command == "sremain":
         exec_sremain(config)
     elif command == "sync":
-        exec_rsync(config, dry_run=args.dry)
+        exec_rsync(config, dry_run=args.dry, reverse_sync=args.reverse)
     elif command == "log":
         exec_scontrol(config, job_id =args.job_id)
     else:
