@@ -23,6 +23,26 @@ def run_sremain(config, debug=False):
     print_color(bcolors.OKGREEN, "[sremain]")
     print("Done.")
 
+def run_sh(config, command):
+    SERVER = config["REMOTE"]["SERVER"]
+    HOME = config["REMOTE"]["HOME"]
+    CONDA_ENV = config["REMOTE"]["CONDA_ENV"]
+    WORKDIR = config["REMOTE"]["WORKDIR"]
+    # DEST = config["REMOTE"]["DEST"]
+    print_color(bcolors.OKGREEN, "[sh]")
+    print(f"Running [{command}] on {SERVER}...")
+    command = f"ssh {SERVER} '. {HOME}/.bashrc; cd {HOME}/{WORKDIR}; conda activate {HOME}/anaconda3/envs/{CONDA_ENV}; {command};'"  # noqa
+    result = subprocess.Popen(
+        command,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    ).communicate()
+    print(result[0].decode().strip())
+    print_color(bcolors.OKGREEN, "[sh]")
+    print("Done.")
+    # print(rp)
+
 
 def run_sbatch(config, sbatch_file_path):
     SERVER = config["REMOTE"]["SERVER"]

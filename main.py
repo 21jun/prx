@@ -93,6 +93,9 @@ def exec_scontrol(config, job_id):
 def exec_rsync(config, dry_run=False, reverse_sync=False):
     rsync.rsync_box(config=config, dry_run=dry_run, reverse_sync=reverse_sync)
 
+def exec_sh(config, command):
+    slurm.run_sh(config=config, command=command)
+
 
 def main():
     # parse config at .prx directory (.ini)
@@ -102,7 +105,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "command",
-        choices=["init", "sme", "run", "sremain", "sync", "log"],
+        choices=["init", "sme", "run", "sremain", "sync", "log", "sh"],
         help="Subcommand to execute",
     )
     # parser.add_argument('args', nargs=argparse.REMAINDER, help="Additional arguments")
@@ -110,6 +113,7 @@ def main():
     parser.add_argument("--reverse", "-r", action="store_true")
     parser.add_argument("--nosync", action="store_true")
     parser.add_argument("--file", "-f", type=str, help="sbatch file")
+    parser.add_argument("--sh", "-s", type=str, help="command to run, should be quoted('' or \"\")")
     parser.add_argument("--job_id", "-j", type=str, default=None)
     args = parser.parse_args()
 
@@ -126,6 +130,8 @@ def main():
         exec_rsync(config, dry_run=args.dry, reverse_sync=args.reverse)
     elif command == "log":
         exec_scontrol(config, job_id =args.job_id)
+    elif command == "sh":
+        exec_sh(config, command=args.sh)
     else:
         print("Unknown command:", command)
         exit(1)
