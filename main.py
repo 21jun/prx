@@ -115,13 +115,14 @@ def main():
     parser.add_argument("--file", "-f", type=str, help="sbatch file")
     parser.add_argument("--sh", "-s", type=str, help="command to run, should be quoted('' or \"\")")
     parser.add_argument("--job_id", "-j", type=str, default=None)
+    parser.add_argument("--option", "-o", type=str, default=None)
     args = parser.parse_args()
 
     command = args.command
     if command == "init":
         init(config)
     elif command == "sme":
-        slurm.run_sme(config)
+        slurm.run_sme(config, args.option)
     elif command == "run":
         exec_sbatch(config, sbatch_file_path=args.file, dry_run=args.dry)
     elif command == "sremain":
@@ -129,7 +130,7 @@ def main():
     elif command == "sync":
         exec_rsync(config, dry_run=args.dry, reverse_sync=args.reverse)
     elif command == "log":
-        exec_scontrol(config, job_id =args.job_id)
+        exec_scontrol(config, job_id=args.job_id)
     elif command == "sh":
         exec_sh(config, command=args.sh)
     else:
