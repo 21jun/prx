@@ -5,7 +5,6 @@ package_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 def rsync_box(config, dry_run=False, reverse_sync=False):
-
     SERVER = config["REMOTE"]["SERVER"]
     WORKDIR = config["REMOTE"]["WORKDIR"]
     HOME = config["REMOTE"]["HOME"]

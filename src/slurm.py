@@ -7,7 +7,9 @@ def run_sremain(config, debug=False):
     SERVER = config["REMOTE"]["SERVER"]
     HOME = config["REMOTE"]["HOME"]
     CONDA_ENV = config["REMOTE"]["CONDA_ENV"]
-    command = f"ssh {SERVER} '. {HOME}/.bashrc; conda activate {CONDA_ENV}; sremain;'"  # noqa
+    command = (
+        f"ssh {SERVER} '. {HOME}/.bashrc; conda activate {CONDA_ENV}; sremain;'"  # noqa
+    )
     print_color(bcolors.OKGREEN, "[sremain]")
     print(f"Connecting to {SERVER}...")
 
@@ -17,10 +19,11 @@ def run_sremain(config, debug=False):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     ).communicate()
-    
+
     print(f"\n{result[0].decode().strip()}\n")
     print_color(bcolors.OKGREEN, "[sremain]")
     print("Done.")
+
 
 def run_sh(config, command):
     SERVER = config["REMOTE"]["SERVER"]
@@ -41,6 +44,7 @@ def run_sh(config, command):
     print(result[0].decode())
     print_color(bcolors.OKGREEN, "\n[sh]")
     print("Done.")
+
 
 def run_sbatch(config, sbatch_file_path):
     SERVER = config["REMOTE"]["SERVER"]
@@ -63,6 +67,7 @@ def run_sbatch(config, sbatch_file_path):
     print_color(bcolors.OKGREEN, "[sbatch]")
     print("Done.")
 
+
 def run_sme(config, option):
     SERVER = config["REMOTE"]["SERVER"]
     HOME = config["REMOTE"]["HOME"]
@@ -71,8 +76,8 @@ def run_sme(config, option):
     # DEST = config["REMOTE"]["DEST"]
     print_color(bcolors.OKGREEN, "[sme]")
     print(f"your current jobs are...")
-    
-    format = "\"%6i  %20j  %9T %12u %8g %12P %4D %15R %4C %13b %8m %11l %11L\""
+
+    format = '"%6i  %20j  %9T %12u %8g %12P %4D %15R %4C %13b %8m %11l %11L"'
     if option is not None:
         command = f"ssh {SERVER} '. {HOME}/.bashrc; squeue --format {format} | grep {option};'"
     else:
@@ -87,6 +92,7 @@ def run_sme(config, option):
     print(f"\n{result[0].decode().strip()}\n")
     print_color(bcolors.OKGREEN, "[sme]")
     print("Done.")
+
 
 def run_scontrol(config, job_id):
     SERVER = config["REMOTE"]["SERVER"]

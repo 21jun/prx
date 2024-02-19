@@ -10,5 +10,5 @@ class bcolors:
     UNDERLINE = "\033[4m"
 
 
-def print_color(color, msg):
-    print(color + msg + bcolors.ENDC, end=" ")
+def print_color(color, msg, end=" "):
+    print(color + msg + bcolors.ENDC, end=end)
