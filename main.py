@@ -1,9 +1,11 @@
 import subprocess
 import argparse
 import os
+from pathlib import Path
 
 from datetime import datetime
 from utils.color import bcolors, print_color
+from utils.db import save_job_log
 import glob
 import sys
 from src import rsync
@@ -112,7 +114,7 @@ def init(config):
 
 def exec_sbatch(config, args):
     # first, sync the files
-    rsync.rsync_box(config=config, dry_run=args.dry_run, reverse_sync=args.reverse_sync)
+    rsync.rsync_box(config=config, dry_run=args.dry, reverse_sync=args.reverse)
     # then, submit the job
     slurm.run_sbatch(config=config, sbatch_file_path=args.sbatch_file_path)
 
@@ -127,7 +129,7 @@ def exec_scontrol(config, args):
 
 
 def exec_rsync(config, args):
-    rsync.rsync_box(config=config, dry_run=args.dry_run, reverse_sync=args.reverse_sync)
+    rsync.rsync_box(config=config, dry_run=args.dry, reverse_sync=args.reverse)
 
 
 def exec_sh(config, args):
@@ -136,11 +138,24 @@ def exec_sh(config, args):
 
 def exec_run(config, args):
     # First create run dir in local
-    run.create_run(config, args)
+    sbatch_file_path = run.create_run(config, args)
     # Then sync the files
     rsync.rsync_box(config=config, dry_run=args.dry)
 
     # Then submit the job
+    jobid = slurm.run_sbatch(config=config, sbatch_file_path=sbatch_file_path)
+
+    # save jobid
+
+    logs = (
+        str(Path(sbatch_file_path).absolute())
+        + "\t"
+        + args.gpu_type
+        + " x "
+        + args.gpu_num
+        + "\t"
+    )
+    save_job_log(jobid, logs)
 
 
 def main():
@@ -162,8 +177,14 @@ def main():
     sremain_parser.add_argument("--dry", action="store_true")
 
     sync_parser = subparsers.add_parser("sync", help="sync help")
-    sync_parser.add_argument("--dry", action="store_true")
-    sync_parser.add_argument("--reverse", "-r", action="store_true")
+    sync_parser.add_argument("--dry", action="store_true", default=False)
+    sync_parser.add_argument(
+        "--reverse",
+        "-r",
+        action="store_true",
+        default=False,
+        help="reverse sync from remote to local.)",
+    )
 
     log_parser = subparsers.add_parser("log", help="log help")
     log_parser.add_argument("--job_id", "-j", type=str, default=None)

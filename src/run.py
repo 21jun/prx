@@ -4,16 +4,13 @@ from utils.color import print_color, bcolors
 import shutil
 from pathlib import Path
 from datetime import datetime
+import re
 
 
-def build_sbatch_sciprt(config, args):
-    with open(".prx/template.sbatch", "r") as f:
-        script = f.read()
-
-    # replace the template with the config
-    for section in config.sections():
-        for key in config[section]:
-            script = script.replace(f"{{{{ {key.upper()} }}}}", config[section][key])
+def _extract_format_variables(template):
+    pattern = r"\{(\w+)\}"
+    matches = re.findall(pattern, template)
+    return set(matches)
 
 
 def create_run(config, args):
@@ -35,3 +32,59 @@ def create_run(config, args):
     print_color(bcolors.UNDERLINE, "[local]")
     print_color(bcolors.OKGREEN, f"Created run: {EXP_ROOT}/runs/", end="")
     print_color(bcolors.OKCYAN, f"{RUN_PATH.name}", end="\n")
+
+    with open(".prx/template.sbatch", "r") as f:
+        script_template = f.read()
+
+    # replace the template with the config
+    # for key in config["SLURM"]:
+    #     print(key.upper(), config["SLURM"][key])
+    #     script_template = script_template.format(JOB_NAME=config["SLURM"][key])
+    variables = _extract_format_variables(script_template)
+    # print(variables)
+
+    # for key, val in config["SLURM"].items():
+    #     print(key, val)
+
+    mapping = {}
+    # Magic keys
+    mapping["RUN_SCRIPT_PATH"] = RUN_PATH / Path(SCRIPT_PATH).name
+    mapping["RUN_PATH"] = RUN_PATH
+    mapping["DATETIME"] = DATETIME
+    mapping["EXP_NAME"] = EXP_ROOT.name
+    mapping["OUTPUT_PATH"] = RUN_PATH
+    mapping["JOB_NAME"] = f"{EXP_ROOT.name}_{DATETIME}"
+
+    # overwrite the config if the key is defined in the config
+    for key, val in config["SLURM"].items():
+        mapping[key.upper()] = val
+
+    mapping["GPU_TYPE"] = (
+        args.gpu_type if args.gpu_type else config["SLURM"]["GPU_TYPE"]
+    )
+    mapping["GPU_NUM"] = args.gpu_num if args.gpu_num else config["SLURM"]["GPU_NUM"]
+
+    for key, val in mapping.items():
+        if val is None:
+            print_color(
+                bcolors.WARNING, f"Warning: {key} is not defined in the config file."
+            )
+            mapping[key] = input(f"{key} = ")
+
+    # print(mapping)
+
+    script_template = script_template.format(**mapping)
+
+    # print(script_template)
+
+    # print(script_template)
+
+    sbatch_file_path = None
+
+    with open(RUN_PATH / "run.sbatch", "w") as f:
+        f.write(script_template)
+        sbatch_file_path = f.name
+
+    print_color(bcolors.OKCYAN, "[run]")
+    print("complete.")
+    return sbatch_file_path

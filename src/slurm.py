@@ -55,7 +55,7 @@ def run_sbatch(config, sbatch_file_path):
     print_color(bcolors.OKGREEN, "[sbatch]")
     # print(bcolors.OKGREEN + "[sbatch]" + bcolors.ENDC, end=" ")
     print(f"Submitting {sbatch_file_path} to {SERVER}...")
-    command = f"ssh {SERVER} '. {HOME}/.bashrc; cd {HOME}/{WORKDIR}; conda activate {CONDA_ENV}; sbatch {sbatch_file_path};'"  # noqa
+    command = f"ssh {SERVER} '. {HOME}/.bashrc; cd {HOME}/{WORKDIR}; conda activate {HOME}/anaconda3/envs/{CONDA_ENV}; sbatch {sbatch_file_path};'"  # noqa
 
     result = subprocess.Popen(
         command,
@@ -63,9 +63,21 @@ def run_sbatch(config, sbatch_file_path):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     ).communicate()
-    print(result[0].decode().strip())
     print_color(bcolors.OKGREEN, "[sbatch]")
-    print("Done.")
+    print(result[0].decode().strip())
+    # Submitted batch job 202090
+    # parse only the job id
+    jobid = result[0].decode().strip().split()[-1]
+
+    # check the jobid is number
+    if not jobid.isdigit():
+        print_color(bcolors.FAIL, "[sbatch]")
+        print_color(bcolors.FAIL, "Failed to submit the job.", end="\n")
+        return None
+
+    print_color(bcolors.OKGREEN, "[sbatch]")
+
+    return jobid
 
 
 def run_sme(config, option):
