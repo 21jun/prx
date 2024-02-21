@@ -29,7 +29,7 @@ echo "${RED}[rsync]${NC} sync ${PINK}${SOURCE}${NC} to ${GREEN}$SERVER:$WORKDIR/
 # echo "${RED}[rsync]${NC} backup directory: ${GREEN}${BACKUPDIR}${NC}"
 # mkdir -p $BACKUPDIR
 echo "${RED}[rsync]${NC} rsync -azvP $DRYRUN $SOURCE $SERVER:$WORKDIR/$DEST"
-rsync -azvP $DRYRUN $SOURCE $SERVER:$WORKDIR/$DEST 
+rsync -azvP $DRYRUN $SOURCE $SERVER:$WORKDIR/$DEST
 
 # check if reverse sync is needed
 if [ "$REVERSE" = "--reverse" ]; then

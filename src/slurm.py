@@ -55,7 +55,7 @@ def run_sbatch(config, sbatch_file_path):
     print_color(bcolors.OKGREEN, "[sbatch]")
     # print(bcolors.OKGREEN + "[sbatch]" + bcolors.ENDC, end=" ")
     print(f"Submitting {sbatch_file_path} to {SERVER}...")
-    command = f"ssh {SERVER} '. {HOME}/.bashrc; cd {HOME}/{WORKDIR}; conda activate {HOME}/anaconda3/envs/{CONDA_ENV}; sbatch {sbatch_file_path};'"  # noqa
+    command = f"ssh {SERVER} '. {HOME}/.bashrc; cd {HOME}/{WORKDIR}; conda activate {CONDA_ENV}; sbatch {sbatch_file_path};'"  # noqa
 
     result = subprocess.Popen(
         command,
