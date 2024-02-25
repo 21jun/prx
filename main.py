@@ -131,6 +131,15 @@ def exec_scontrol(config, args):
 def exec_rsync(config, args):
     rsync.rsync_box(config=config, dry_run=args.dry, reverse_sync=args.reverse)
 
+def exec_fetch(config, args):
+    rsync.rsync_fetch(config=config, dry_run=args.dry, path=args.path)
+
+
+def exec_purge(config, args):
+    # slurm.run_purge(config=config)
+    ...
+    
+
 
 def exec_sh(config, args):
     slurm.run_sh(config=config, command=args.command)
@@ -204,6 +213,12 @@ def main():
     test_parser.add_argument("--gpu_num", "-n", default="1")
     test_parser.add_argument("--gpu_type", "-t", default="A6000")
 
+
+    fetch_parser = subparsers.add_parser("fetch", help="fetch files from remote to local")
+    fetch_parser.add_argument("--dry", action="store_true", default=False)
+    fetch_parser.add_argument("-p", "--path", type=str, help="path to fetch", required=True)
+    
+    
     args = main_parser.parse_args()
 
     print_color(bcolors.HEADER, "[main]")
@@ -219,7 +234,7 @@ def main():
             "log": exec_scontrol,
             "sh": exec_sh,
             "run": exec_run,
-            "test": print,
+            "fetch": exec_fetch,
         }
         return commands.get(command, lambda: print("Invalid command"))(config, args)
 
