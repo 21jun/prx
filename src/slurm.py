@@ -80,7 +80,7 @@ def run_sbatch(config, sbatch_file_path):
     return jobid
 
 
-def run_sme(config, option):
+def run_squeue(config, option):
     SERVER = config["REMOTE"]["SERVER"]
     HOME = config["REMOTE"]["HOME"]
     CONDA_ENV = config["REMOTE"]["CONDA_ENV"]
@@ -89,7 +89,7 @@ def run_sme(config, option):
     print_color(bcolors.OKGREEN, "[sme]")
     print(f"your current jobs are...")
 
-    format = '"%6i  %20j  %9T %12u %8g %12P %4D %15R %4C %13b %8m %11l %11L"'
+    format = '"%6i  %30j  %9T %12u %8g %12P %4D %15R %4C %13b %8m %11l %11L"'
     if option is not None:
         command = f"ssh {SERVER} '. {HOME}/.bashrc; squeue --format {format} | grep {option};'"
     else:

@@ -122,7 +122,9 @@ def exec_sbatch(config, args):
 def exec_sremain(config, args):
     # then, submit the job
     slurm.run_sremain(config=config)
-
+    
+def exec_squeue(config, args):
+    slurm.run_squeue(config=config, option=args.option)
 
 def exec_scontrol(config, args):
     slurm.run_scontrol(config=config, job_id=args.job_id)
@@ -142,8 +144,7 @@ def exec_purge(config, args):
 
 
 def exec_sh(config, args):
-    slurm.run_sh(config=config, command=args.command)
-
+    slurm.run_sh(config=config, command=args.sh)
 
 def exec_run(config, args):
     # First create run dir in local
@@ -184,6 +185,9 @@ def main():
 
     sremain_parser = subparsers.add_parser("sremain", help="sremain help")
     sremain_parser.add_argument("--dry", action="store_true")
+    
+    squeue_parser = subparsers.add_parser("squeue", help="squeue help")
+    squeue_parser.add_argument("--option", "-o", type=str, default=None)
 
     sync_parser = subparsers.add_parser("sync", help="sync help")
     sync_parser.add_argument("--dry", action="store_true", default=False)
@@ -235,6 +239,7 @@ def main():
             "sh": exec_sh,
             "run": exec_run,
             "fetch": exec_fetch,
+            "squeue": exec_squeue,
         }
         return commands.get(command, lambda: print("Invalid command"))(config, args)
 
