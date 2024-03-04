@@ -12,9 +12,29 @@ def _extract_format_variables(template):
     matches = re.findall(pattern, template)
     return set(matches)
 
+def fetch_run(config, args):
+    
+    SERVER = config["REMOTE"]["SERVER"]
+    HOME = config["REMOTE"]["HOME"]
+    CONDA_ENV = config["REMOTE"]["CONDA_ENV"]
+    WORKDIR = config["REMOTE"]["WORKDIR"]
+    # DEST = config["REMOTE"]["DEST"]
+    print_color(bcolors.OKGREEN, "[fetch]")
+    print(f"Fetching {args.run} from {SERVER}...")
+    command = f"scp -r {SERVER}:{HOME}/{WORKDIR}/runs/{args.run} runs/"
+    print(command)
+    result = subprocess.Popen(
+        command,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    ).communicate()
+    print(result[0].decode())
+    print_color(bcolors.OKGREEN, "\n[fetch]")
+    print("Done.")
 
 def create_run(config, args):
-    DATETIME = datetime.now().strftime("%Y%m%d+%H:%M:%S")
+    DATETIME = datetime.now().strftime("%Y%m%d-%H%M%S")
 
     SCRIPT_PATH = args.file
     EXP_ROOT = Path(SCRIPT_PATH).parent
@@ -75,9 +95,6 @@ def create_run(config, args):
 
     script_template = script_template.format(**mapping)
 
-    # print(script_template)
-
-    # print(script_template)
 
     sbatch_file_path = None
 
@@ -88,3 +105,9 @@ def create_run(config, args):
     print_color(bcolors.OKCYAN, "[run]")
     print("complete.")
     return sbatch_file_path
+
+
+def remove_run(config, args):
+    pass
+
+

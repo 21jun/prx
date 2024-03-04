@@ -25,10 +25,10 @@ PINK='\033[0;35m'
 # fi
 
 # local to remote
-echo "${RED}[rsync]${NC} sync ${PINK}${SOURCE}${NC} to ${GREEN}$SERVER:$WORKDIR/${DEST}/${SOURCE}${NC}"
+echo "sync ${PINK}${SOURCE}${NC} to ${GREEN}$SERVER:$WORKDIR/${DEST}/${SOURCE}${NC}"
 # echo "${RED}[rsync]${NC} backup directory: ${GREEN}${BACKUPDIR}${NC}"
 # mkdir -p $BACKUPDIR
-echo "${RED}[rsync]${NC} rsync -azvP $DRYRUN $SOURCE $SERVER:$WORKDIR/$DEST"
+echo "sync -azvP $DRYRUN $SOURCE $SERVER:$WORKDIR/$DEST"
 rsync -azvP $DRYRUN $SOURCE $SERVER:$WORKDIR/$DEST
 
 # check if reverse sync is needed
@@ -42,7 +42,7 @@ fi
 
 
 if [ "$DRYRUN" = "--dry-run" ]; then
-    echo "${RED}[rsync]${NC} Dry run completed. No files were copied."  
+    echo "Dry run completed. No files were copied."  
 else
-    echo "${RED}[rsync]${NC} completed."
+    echo "completed."
 fi

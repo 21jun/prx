@@ -220,7 +220,8 @@ def main():
 
     fetch_parser = subparsers.add_parser("fetch", help="fetch files from remote to local")
     fetch_parser.add_argument("--dry", action="store_true", default=False)
-    fetch_parser.add_argument("-p", "--path", type=str, help="path to fetch", required=True)
+    fetch_parser.add_argument("-p", "--path", type=str, help="path to fetch", required=False)
+    fetch_parser.add_argument("-j", "--jobid", type=str, help="path to fetch", required=False)
     
     
     args = main_parser.parse_args()
