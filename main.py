@@ -114,9 +114,9 @@ def init(config):
 
 def exec_sbatch(config, args):
     # first, sync the files
-    rsync.rsync_box(config=config, dry_run=args.dry, reverse_sync=args.reverse)
+    rsync.rsync_box(config=config, dry_run=args.dry)
     # then, submit the job
-    slurm.run_sbatch(config=config, sbatch_file_path=args.sbatch_file_path)
+    slurm.run_sbatch(config=config, sbatch_file_path=args.file)
 
 
 def exec_sremain(config, args):

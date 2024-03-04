@@ -89,7 +89,7 @@ def run_squeue(config, option):
     print_color(bcolors.OKGREEN, "[sme]")
     print(f"your current jobs are...")
 
-    format = '"%6i  %30j  %9T %12u %8g %12P %4D %15R %4C %13b %8m %11l %11L"'
+    format = '"%6i  %30j  %9T %12u %8g %12P %4D %15R %4C %13b %8m %11l %11L %20p"'
     if option is not None:
         command = f"ssh {SERVER} '. {HOME}/.bashrc; squeue --format {format} | grep {option};'"
     else:
